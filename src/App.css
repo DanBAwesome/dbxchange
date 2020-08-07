@@ -36,3 +36,38 @@
     transform: rotate(360deg);
   }
 }
+
+.select-with-input {
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  width: max-content;
+  overflow: hidden;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.select-with-input > select, .select-with-input > input {
+  border: 0;
+}
+
+.select-with-input > select:focus, .select-with-input > input:focus {
+  outline: none;
+}
+
+.card {
+  font-size: 1.5rem;
+}
+
+.updated-time {
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.disclaimer {
+  font-size: 0.75rem;
+  margin-bottom: 30px;
+  font-style: italic;
+}
