@@ -1,12 +1,5 @@
 import React from 'react';
-
-function AvailableOptions(props) {
-    return (
-        <option value={props.option}>
-            {props.option}
-        </option>
-    )
-}
+import Select from './Select';
 
 class SelectWithInput extends React.Component {
     
@@ -18,12 +11,8 @@ class SelectWithInput extends React.Component {
         const { placeholder, options, currentItem, value, selectChange, inputChange } = this.props;
 
         return (
-            <div className="select-with-input">
-                <select onChange={selectChange} value={currentItem}>
-                    {options.map((option, index) =>
-                        <AvailableOptions key={index} option={option} />
-                    )}
-                </select>
+            <div className="input-container">
+                <Select options={options} currentItem={currentItem} selectChange={selectChange} />
                 <input type="text" placeholder={placeholder ?? ''} value={value} onChange={inputChange} onFocus={this.onFocus} />
             </div>
         )

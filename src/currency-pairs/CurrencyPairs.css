@@ -1,0 +1,11 @@
+#currencyPairs {
+    display: inline-flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+@media(max-width: 991px) {
+    #currencyPairs {
+        display: block;
+    }   
+}

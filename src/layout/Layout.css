@@ -2,6 +2,11 @@ footer {
     text-align: left;
     background-color: #fefefe;
     padding: 10px 15px 50px 15px;
+    z-index: 1001;
+}
+
+nav {
+    z-index: 1001;
 }
 
 .social-icon {

@@ -2,6 +2,7 @@ import React from 'react';
 import './Layout.css';
 import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { InnerFooter } from '../shared/InnerFooter';
 
 class Header extends React.Component {
     render() {
@@ -21,6 +22,8 @@ class Header extends React.Component {
                         <LinkContainer to="/exchange-rates">
                             <Nav.Link>Exchange Rates</Nav.Link>
                         </LinkContainer>
+
+                        <InnerFooter mobile={true} />
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

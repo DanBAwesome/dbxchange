@@ -1,12 +1,7 @@
 import React from 'react';
 import { currencies, success, parseJSON, hasBeenMoreThanDay, toFixed } from '../shared/utils';
 import SelectWithInput from '../shared/SelectWithInput';
-
-// class Selection extends React.Component {
-//     render() {
-//         return()
-//     }
-// }
+import './CurrencyPairs.css';
 
 class CurrencyPairs extends React.Component {
     constructor(props) {
@@ -34,6 +29,7 @@ class CurrencyPairs extends React.Component {
 
     updateResults(data) {
         const { currency1, currency2 } = this.state;
+        const { toggleLoading } = this.props;
         currency1.name = data.base;
         currency2.name = Object.keys(data.rates)[0];
         currency2.value = toFixed(currency1.value * data.rates[currency2.name], 2);
@@ -42,7 +38,9 @@ class CurrencyPairs extends React.Component {
             currencyPair: data.rates[currency2.name],
             currency1,
             currency2
-        })
+        });
+
+        toggleLoading(false);
     }
 
     prependZeros(number, maxLength = 1) {
@@ -55,17 +53,21 @@ class CurrencyPairs extends React.Component {
     }
 
     componentDidMount() {
+        
         let storedResult = JSON.parse(localStorage.getItem("currencyPair"));
 
-        if (storedResult && !hasBeenMoreThanDay()) {
-            return this.updateResults(storedResult);
+        if (storedResult && !hasBeenMoreThanDay(storedResult.date)) {
+            this.updateResults(storedResult);
+            return;
         }
         this.loadResults();
     }
 
     loadResults() {
         const { currency1, currency2 } = this.state;
+        const { toggleLoading } = this.props;
 
+        toggleLoading(true);
         fetch(`https://alt-exchange-rate.herokuapp.com/latest?base=${currency1.name}&symbols=${currency2.name}`)
             .then(success)
             .then(parseJSON)
@@ -84,7 +86,7 @@ class CurrencyPairs extends React.Component {
     }
 
     onValue1Change(event) {
-        let value = Number(event.target.value)
+        let value = Number(event.target.value);
         const { currency1, currency2 } = this.state;
 
         if (!value && value !== 0) {
@@ -141,21 +143,29 @@ class CurrencyPairs extends React.Component {
 
     render() {
         const { currency1, currency2, lastUpdated } = this.state;
+        const { loading } = this.props;
 
         return (
-            <div className="card-body align-self-center">
-                <div className="updated-time">Last Updated At {lastUpdated} UTC</div>
-                <SelectWithInput options={currencies.filter(x => x !== currency2.name)}
-                    currentItem={currency1.name}
-                    value={currency1.value}
-                    selectChange={this.onSelect1Change}
-                    inputChange={this.onValue1Change} />
-                <SelectWithInput options={currencies.filter(x => x !== currency1.name)}
-                    currentItem={currency2.name}
-                    value={currency2.value}
-                    selectChange={this.onSelect2Change}
-                    inputChange={this.onValue2Change} />
-            </div>
+            <React.Fragment>
+                <div className="card-header">
+                    Currency Pairs
+                </div>
+                <div className="card-body" hidden={loading}>
+                    <div className="updated-time">Last Updated At {lastUpdated} UTC</div>
+                    <div id="currencyPairs">
+                        <SelectWithInput options={currencies.filter(x => x !== currency2.name)}
+                            currentItem={currency1.name}
+                            value={currency1.value}
+                            selectChange={this.onSelect1Change}
+                            inputChange={this.onValue1Change} />
+                        <SelectWithInput options={currencies.filter(x => x !== currency1.name)}
+                            currentItem={currency2.name}
+                            value={currency2.value}
+                            selectChange={this.onSelect2Change}
+                            inputChange={this.onValue2Change} />
+                    </div>
+                </div>
+            </React.Fragment>
         )
     }
 }

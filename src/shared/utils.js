@@ -31,8 +31,8 @@ const yyyymmddFormat = (date) => {
 
 export const toFixed = (number, length) => Number.parseFloat(number).toFixed(length);
 
-export function hasBeenMoreThanDay() {
-    const localDate = new Date(localStorage.getItem("date")).setHours(16);
+export function hasBeenMoreThanDay(date) {
+    const localDate = new Date(date).setHours(16);
     if ((new Date().getTime() - localDate) >= millisecondsInDay) {
         return true;
     }
