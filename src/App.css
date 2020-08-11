@@ -187,11 +187,15 @@ footer {
 
   .currency-item {
     margin: 0;
-    /* padding: 5px 20px 5px 20px; */
     border-bottom: 1px solid #8e8e8e;
   }
 
   .currency-item:last-child {
     border-bottom: 0;
+  }
+
+  .currency-item button {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }

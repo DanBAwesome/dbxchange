@@ -70,7 +70,6 @@ class ExchangeRates extends React.Component {
     removeItem(name) {
         const { selectedRates } = this.state;
         const index = selectedRates.indexOf(name);
-        console.log(name)
         if (index !== -1) {
             selectedRates.splice(index, 1);
             this.setState({ selectedRates });
@@ -117,7 +116,6 @@ class ExchangeRates extends React.Component {
 
         if (storedResult && !hasBeenMoreThanDay(storedResult.date)) {
             this.updateResults(storedResult);
-            console.log(this.state);
             return;
         }
         this.loadResults();
@@ -147,7 +145,7 @@ class ExchangeRates extends React.Component {
                 </div>
                 <div className="card-body" hidden={loading}>
                     <div className="updated-time">Last Updated At {lastUpdated} UTC</div>
-                    <div className="w-100 d-lg-inline-flex justify-content-around mb-5 d-block">
+                    <div className="w-100 d-lg-inline-flex justify-content-around mb-3 d-block">
                         <SelectWithInput options={currencies}
                             currentItem={currency.name}
                             value={currency.value}
@@ -161,12 +159,11 @@ class ExchangeRates extends React.Component {
                         </div>
                     </div>
                     <div className="rates-table">
-                        {selectedRates.map((rate, index) => {
+                        {selectedRates.length > 0 ? selectedRates.map((rate, index) => {
                             return <CurrencyItem key={index} name={rate} value={rates[rate] * currency.value} removeClick={this.removeItem} />
                         }).filter(x => {
-                            console.log(x)
                             return x.props.name !== currency.name;
-                        })}
+                        }) : <div>To Compare Rates, Add A Currency Using The Dropdown Above</div>}
                     </div>
                 </div>
             </React.Fragment>
