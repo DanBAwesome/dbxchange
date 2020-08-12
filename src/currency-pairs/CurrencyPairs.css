@@ -6,6 +6,6 @@
 
 @media(max-width: 991px) {
     #currencyPairs {
-        display: block;
+        display: grid;
     }   
 }

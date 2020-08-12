@@ -7,7 +7,7 @@ import { InnerFooter } from '../shared/InnerFooter';
 class Header extends React.Component {
     render() {
         return (
-            <Navbar bg="light" expand="lg" className="absolute">
+            <Navbar bg="light" expand="lg" className="absolute" collapseOnSelect>
                 <LinkContainer to="/">
                     <Navbar.Brand>
                         DBXchange

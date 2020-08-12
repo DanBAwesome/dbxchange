@@ -67,24 +67,25 @@
 .input-container {
   border: 1px solid #e1e1e1;
   border-radius: 10px;
-  width: max-content;
+  width: inherit;
   overflow: hidden;
   margin-top: 0;
+  max-width: 300px;
   margin-bottom: 15px;
   display: inline-flex;
   background-color: #e1e1e1;
-  margin-left: -15px;
 }
 
 .input-container > select {
   background-color: #e1e1e1;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .input-container > input {
   padding-left: 10px;
   padding-right: 10px;
+  width: inherit;
 }
 
 .input-container > * {

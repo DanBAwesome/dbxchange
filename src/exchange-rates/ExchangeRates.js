@@ -11,8 +11,8 @@ class CurrencyItem extends React.Component {
         return (
             <div className="currency-item">
                 <span>{name}</span>
+                <span>{value.toFixed(2)}</span>
                 <span>
-                    <span>{value.toFixed(2)}</span>
                     <button onClick={() => removeClick(name)}>
                         <FontAwesomeIcon icon={faTimes} />
                     </button>
@@ -144,7 +144,7 @@ class ExchangeRates extends React.Component {
                     Exchange Rates
                 </div>
                 <div className="card-body" hidden={loading}>
-                    <div className="updated-time">Last Updated At {lastUpdated} UTC</div>
+                    <div className="updated-time">Last Updated At {lastUpdated} CET</div>
                     <div className="w-100 d-lg-inline-flex justify-content-around mb-3 d-block">
                         <SelectWithInput options={currencies}
                             currentItem={currency.name}
