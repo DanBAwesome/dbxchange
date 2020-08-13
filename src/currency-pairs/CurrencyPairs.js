@@ -1,9 +1,10 @@
 import React from 'react';
-import { currencies, success, parseJSON, hasBeenMoreThanDay, toFixed } from '../shared/utils';
+import { currencies, success, parseJSON, hasBeenMoreThanDay, toFixed, getPreviousMonth } from '../shared/utils';
 import SelectWithInput from '../shared/SelectWithInput';
 import './CurrencyPairs.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import Chart from 'chart.js';
 
 class CurrencyPairs extends React.Component {
     constructor(props) {
@@ -28,11 +29,13 @@ class CurrencyPairs extends React.Component {
         this.onSelect2Change = this.onSelect2Change.bind(this);
         this.loadResults = this.loadResults.bind(this);
         this.flipRates = this.flipRates.bind(this);
+        this.getCurrencyHistory = this.getCurrencyHistory.bind(this);
+
+        this.chartRef = React.createRef();
     }
 
     updateResults(data) {
         const { currency1, currency2 } = this.state;
-        const { toggleLoading } = this.props;
         currency1.name = data.base;
         currency2.name = Object.keys(data.rates)[0];
         currency2.value = toFixed(currency1.value * data.rates[currency2.name], 2);
@@ -43,7 +46,7 @@ class CurrencyPairs extends React.Component {
             currency2
         });
 
-        toggleLoading(false);
+        this.getCurrencyHistory();
     }
 
     prependZeros(number, maxLength = 1) {
@@ -65,6 +68,48 @@ class CurrencyPairs extends React.Component {
         this.loadResults();
     }
 
+    createGraph(baseLabel, labels, data) {
+        let ctx = this.chartRef.current.getContext('2d');
+
+        if(typeof this.chart !== "undefined") {
+            this.chart.destroy();
+        }
+
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{ label: baseLabel, data: data, backgroundColor: "#3159ca7a" }]
+            },
+            options: {
+                legend: {
+                    onClick: (event) => event.stopPropagation()
+                }
+            }   
+        })
+    }
+
+    getCurrencyHistory() {
+        const { currency1, currency2 } = this.state;
+        const { toggleLoading } = this.props;
+        const localStorageDate = localStorage.getItem("date");
+        const previousMonth = getPreviousMonth(localStorageDate);
+
+        fetch(`https://alt-exchange-rate.herokuapp.com/history?start_at=${previousMonth}&end_at=${localStorageDate}&base=${currency1.name}&symbols=${currency2.name}`)
+            .then(success)
+            .then(parseJSON)
+            .then(data => {
+                const graphLabels = Object.keys(data.rates);
+                const graphData = Object.values(data.rates).map(value => value[currency2.name]);
+                const label = `${currency1.name}/${currency2.name}`;
+                toggleLoading(false);
+                this.createGraph(label, graphLabels, graphData);
+            })
+            .catch((error) => {
+                console.log(error.message);
+            })
+    }
+
     loadResults() {
         const { currency1, currency2 } = this.state;
         const { toggleLoading } = this.props;
@@ -74,9 +119,9 @@ class CurrencyPairs extends React.Component {
             .then(success)
             .then(parseJSON)
             .then((data) => {
-                this.updateResults(data);
                 localStorage.setItem("currencyPair", JSON.stringify(data));
                 localStorage.setItem("date", data.date);
+                this.updateResults(data);
             })
             .catch((error) => {
                 console.log(error.message);
@@ -142,13 +187,13 @@ class CurrencyPairs extends React.Component {
         })
     }
 
-    updateCurrency2(currency1, currency2, value) {
+    updateCurrency2(currency1, currency2, value, callback) {
         currency1.value = value;
         currency2.value = toFixed(Number(value) * this.state.currencyPair, 2);
         this.setState({
             currency1,
             currency2
-        })
+        }, callback)
     }
 
     flipRates(event) {
@@ -157,13 +202,17 @@ class CurrencyPairs extends React.Component {
         this.setState({
             currencyPair: 1 / currencyPair
         },
-        () => { this.updateCurrency2(currency2, currency1, currency1.value);
-                this.updateLocalStorage(currency2.name, currency1.name, this.state.currencyPair) });        
+            () => {
+                this.updateCurrency2(currency2, currency1, currency1.value, this.getCurrencyHistory);
+                this.updateLocalStorage(currency2.name, currency1.name, this.state.currencyPair);
+            }
+        );
     }
 
     updateLocalStorage(base, pairName, pairRate) {
         const localStorageDate = localStorage.getItem("date");
         let currencyPair = {};
+
         currencyPair.base = base;
         currencyPair.rates = {};
         currencyPair.rates[pairName] = pairRate;
@@ -196,6 +245,7 @@ class CurrencyPairs extends React.Component {
                             selectChange={this.onSelect2Change}
                             inputChange={this.onValue2Change} />
                     </div>
+                    <canvas ref={this.chartRef}></canvas>
                 </div>
             </React.Fragment>
         )
