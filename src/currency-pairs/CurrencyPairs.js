@@ -84,7 +84,8 @@ class CurrencyPairs extends React.Component {
             options: {
                 legend: {
                     onClick: (event) => event.stopPropagation()
-                }
+                },
+                aspectRatio: window.innerWidth > 550 ? 2 : 1
             }   
         })
     }
