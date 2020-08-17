@@ -38,3 +38,10 @@ export function hasBeenMoreThanDay(date) {
     }
 
 }
+
+export function getPreviousMonth(currentMonth) {
+    const previousMonthInMs = new Date(currentMonth).getTime() - (millisecondsInDay * 30);
+    const previousMonth = new Date(previousMonthInMs);
+    return yyyymmddFormat(previousMonth);
+}
+ 
